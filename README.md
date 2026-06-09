@@ -10,8 +10,21 @@ ensuring fair price by calculating the cost based on size and material of the pr
 -Online payment gate with VNPay
 
 ## Setting up the project locally
--Before starting, make sure to install Visual Studio, Microsoft SQL Server. Installing Visual Studio Code is optional. 
--First, Clone the git source or download the file. 
+-Before starting, make sure to install Git and Microsoft SQL Server, Docker Desktop. Installing Visual Studio Code and any Java IDE (e.g IntelliJ) is optional or as an alternative option. 
+-First, clone the repository to the local machine.
+-Then, run the create database script in MySQL studio 
+
+### Docker method
+-Note: There is a file called "DOCKER_SETUP.md" that tell the detail of deploying the project by using Docker
+
+1. Fill in the value or secret in .env, you can also create a new .env if needed
+2. Configure database source, username and password in application.properties
+3. Run "docker compose up --build" in the root of the project
+
+### Alternative method
+1. Install and Open Visual Studio Code and any Java IDE
+2. Open front end file in visual studio code and back end folder in any Java IDE
+3. Run the project
 
 ## Credit
 -This project is a teamwork effort of five members, these will be included as git username

@@ -37,8 +37,8 @@ public class OrderAPI {
         return ResponseEntity.ok(orders);
     }
 
-    @PostMapping("recharge")
-    public ResponseEntity recharge(@RequestBody OrderRequest orderRequest) throws Exception {
+    @PostMapping("payment")
+    public ResponseEntity payment(@RequestBody OrderRequest orderRequest) throws Exception {
         String url = orderService.createUrl(orderRequest);
         return ResponseEntity.ok(url);
     }

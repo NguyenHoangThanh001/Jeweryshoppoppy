@@ -222,3 +222,18 @@ CREATE TABLE IF NOT EXISTS guarantee (
 );
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- ------------------------------------------------------------
+-- transaction
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `transaction` (
+    id              CHAR(36)     NOT NULL,
+    username        VARCHAR(255),
+    billing_address VARCHAR(255),
+    total_money     DOUBLE       NOT NULL DEFAULT 0,
+    generated_at    DATETIME,
+    payment_status  VARCHAR(50),
+    order_id        BIGINT       NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_transaction_order FOREIGN KEY (order_id) REFERENCES orders (id)
+);

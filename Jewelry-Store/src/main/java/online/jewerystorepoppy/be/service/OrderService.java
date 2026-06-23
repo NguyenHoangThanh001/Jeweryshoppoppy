@@ -127,6 +127,7 @@ public class OrderService {
         return points;
     }
 
+    /*
     public String createUrl(OrderRequest orderRequest) throws NoSuchAlgorithmException, InvalidKeyException, Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime createDate = LocalDateTime.now();
@@ -138,7 +139,7 @@ public class OrderService {
         String secretKey = "EWWARKQXLRETERG5AHWD07ZITOETOV12";
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         String returnUrl = "http://jewerystorepoppy.online/staff/pos?orderId=" + order.getId();
-//        String returnUrl = "http://localhost:5173/staff/pos?orderId=" + order.getId();
+        String returnUrl = "http://localhost:5173/staff/pos?orderId=" + order.getId();
 
         String currCode = "VND";
         Map<String, String> vnpParams = new TreeMap<>();
@@ -194,6 +195,8 @@ public class OrderService {
         }
         return result.toString();
     }
+
+   */
 
 
     public List<Orders> getOrder(String phone) {

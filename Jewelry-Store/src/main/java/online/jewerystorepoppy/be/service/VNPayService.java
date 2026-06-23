@@ -2,6 +2,8 @@ package online.jewerystorepoppy.be.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import online.jewerystorepoppy.be.config.VNPayConfig;
+import online.jewerystorepoppy.be.entity.Orders;
+import online.jewerystorepoppy.be.model.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +14,27 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 public class VNPayService {
 
     private final VNPayConfig vnPayConfig;
+    private final OrderService orderService;
     private static final SecureRandom random = new SecureRandom();
 
     @Autowired
-    public VNPayService(VNPayConfig vnPayConfig) {
+    public VNPayService(VNPayConfig vnPayConfig, OrderService orderService) {
         this.vnPayConfig = vnPayConfig;
+        this.orderService = orderService;
     }
 
-    public  String generatePaymentUrl(String amount, String orderInfo, String orderType, HttpServletRequest request) throws UnsupportedEncodingException {
+
+    //Follow CreateUrl from OrderService into here
+    public String generatePaymentUrl(OrderRequest orderRequest, HttpServletRequest request) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_CurrCode = "VND";
@@ -33,27 +42,34 @@ public class VNPayService {
         String vnp_TxnRef = getRandomNumber(8);
         String vnp_IpAddr = getIpAddress(request);
         String vnp_BankCode="VNBANK";
-        int newAmount= Integer.parseInt(amount)*100;
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        Orders order = orderService.createOrder(orderRequest);
+        String orderId= Long.toString(order.getId());
+        String returnURL=vnPayConfig.getVnp_ReturnUrl() + orderId;
+        String totalAmount=(int) order.getTotalAmount() + "00";
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnp_CreateDate = formatter.format(cld.getTime());
-        cld.add(Calendar.MINUTE, 15);
-        String vnp_ExpireDate = formatter.format(cld.getTime());
+        //Setup time based on Vietnam timezone
+        ZoneId vnTimeZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        ZonedDateTime now = ZonedDateTime.now(vnTimeZone);
+        String vnp_CreateDate = now.format(formatter);
+
+        ZonedDateTime expireTime = now.plusMinutes(15);
+        String vnp_ExpireDate = expireTime.format(formatter);
 
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", vnp_Version);
         params.put("vnp_Command", vnp_Command);
         params.put("vnp_TmnCode", vnPayConfig.getVnp_TmnCode());
-        params.put("vnp_Amount", String.valueOf(newAmount));
+        params.put("vnp_Amount", totalAmount);
         params.put("vnp_BankCode",vnp_BankCode);
         params.put("vnp_CurrCode", vnp_CurrCode);
         params.put("vnp_IpAddr", vnp_IpAddr);
         params.put("vnp_Locale", vnp_Locale);
-        params.put("vnp_OrderInfo", orderInfo);
-        params.put("vnp_OrderType", orderType);
-        params.put("vnp_ReturnUrl", vnPayConfig.getVnp_ReturnUrl());
+        params.put("vnp_OrderInfo", "Thanh toan cho ma Giao Dich: " + orderId );
+        params.put("vnp_OrderType", "purchase");
+        params.put("vnp_ReturnUrl", returnURL);
         params.put("vnp_CreateDate", vnp_CreateDate);
         params.put("vnp_ExpireDate", vnp_ExpireDate);
         params.put("vnp_TxnRef", vnp_TxnRef);
@@ -151,6 +167,7 @@ public class VNPayService {
     }
 
     public static String generateRandomString(int length) {
+
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {

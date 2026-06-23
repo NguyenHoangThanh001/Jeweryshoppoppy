@@ -1,11 +1,13 @@
 package online.jewerystorepoppy.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import online.jewerystorepoppy.be.entity.Orders;
 import online.jewerystorepoppy.be.enums.OrderStatus;
 import online.jewerystorepoppy.be.model.OrderRequest;
 import online.jewerystorepoppy.be.model.RechargeRequestDTO;
 import online.jewerystorepoppy.be.service.OrderService;
+import online.jewerystorepoppy.be.service.VNPayService;
 import online.jewerystorepoppy.be.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class OrderAPI {
     OrderService orderService;
 
     @Autowired
-    WalletService walletService;
+    VNPayService vnPayService;
 
 
     @PostMapping
@@ -38,8 +40,8 @@ public class OrderAPI {
     }
 
     @PostMapping("payment")
-    public ResponseEntity payment(@RequestBody OrderRequest orderRequest) throws Exception {
-        String url = orderService.createUrl(orderRequest);
+    public ResponseEntity payment(@RequestBody OrderRequest orderRequest, HttpServletRequest request) throws Exception {
+        String url = vnPayService.generatePaymentUrl(orderRequest, request);
         return ResponseEntity.ok(url);
     }
 

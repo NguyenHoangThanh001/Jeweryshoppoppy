@@ -55,6 +55,12 @@ public class Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getServletPath();
+        if (path.equals("/actuator/health")) {
+            filterChain.doFilter(request, response);
+            return; // skip token check entirely
+        }
+
         String uri = request.getRequestURI(); // /login, /register,...
         System.out.println(uri);
 

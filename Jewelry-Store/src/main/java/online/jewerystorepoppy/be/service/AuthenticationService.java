@@ -87,12 +87,12 @@ public class AuthenticationService implements UserDetailsService {
 
     public AccountResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getPhone(),
+                loginRequest.getPhoneOrEmail(),
                 loginRequest.getPassword()
         ));
         // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhone(), loginRequest.getPhone());
+        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhoneOrEmail(), loginRequest.getPhoneOrEmail());
         if (account.getAccountStatus() == AccountStatus.DELETED) {
             throw new AuthException("Account has been deleted!");
         }

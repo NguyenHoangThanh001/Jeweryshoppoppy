@@ -20,6 +20,7 @@ ensuring fair price by calculating the cost based on size and material of the pr
 1. Fill in the value or secret in .env, you can also create a new .env if needed
 2. Configure database source, username and password in application.properties
 3. Run "docker compose up --build" in the root of the project
+4. Afterward, there should be three localhost project running
 
 ### Alternative method
 1. Install and Open Visual Studio Code and any Java IDE

@@ -43,8 +43,7 @@ public class Filter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/forgot-password",
-            "/api/account"
+            "/api/auth/forgot-password"
     );
 
     private boolean isPermitted(String uri) {
@@ -55,46 +54,53 @@ public class Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getServletPath();
-        if (path.equals("/actuator/health")) {
-            filterChain.doFilter(request, response);
-            return; // skip token check entirely
-        }
+       try{
+           String path = request.getServletPath();
+           if (path.equals("/actuator/health")) {
+               filterChain.doFilter(request, response);
+               return; // skip token check entirely
+           }
 
-        String uri = request.getRequestURI(); // /login, /register,...
-        System.out.println(uri);
+           String uri = request.getRequestURI(); // /login, /register,...
 
-        if (isPermitted(uri)) {
-            // yêu cầu truy cập 1 api => ai cũng truy cập đc
-            filterChain.doFilter(request, response); // cho phép truy cập dô controller
-        } else {
-            String token = getToken(request);
-            if (token == null) {
-                resolver.resolveException(request, response, null, new AuthException("Empty token!"));
-                return;
-            }
-            // => có token
-            Account account;
-            try {
-                // từ token tìm ra thằng đó là ai
-                account = tokenService.extractAccount(token);
-            } catch (ExpiredJwtException expiredJwtException) {
-                // token het han
-                resolver.resolveException(request, response, null, new AuthException("Expired Token!"));
-                return;
-            } catch (MalformedJwtException malformedJwtException) {
-                resolver.resolveException(request, response, null, new AuthException("Invalid Token!"));
-                return;
-            }
-            // => token dung
-            UsernamePasswordAuthenticationToken
-                    authenToken =
-                    new UsernamePasswordAuthenticationToken(account, token, account.getAuthorities());
-            authenToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenToken);
-            // token ok, cho vao`
-            filterChain.doFilter(request, response);
-        }
+
+           if (isPermitted(uri)) {
+               // yêu cầu truy cập 1 api => ai cũng truy cập đc
+               System.out.println("PERMITTED: " + uri + " - passing through");
+               filterChain.doFilter(request, response); // cho phép truy cập dô controller
+           } else {
+               System.out.println("NOT PERMITTED: " + uri + " - checking token");
+               String token = getToken(request);
+               if (token == null) {
+                   resolver.resolveException(request, response, null, new AuthException("Empty token!"));
+                   return;
+               }
+               // => có token
+               Account account;
+               try {
+                   // từ token tìm ra thằng đó là ai
+                   account = tokenService.extractAccount(token);
+               } catch (ExpiredJwtException expiredJwtException) {
+                   // token het han
+                   resolver.resolveException(request, response, null, new AuthException("Expired Token!"));
+                   return;
+               } catch (MalformedJwtException malformedJwtException) {
+                   resolver.resolveException(request, response, null, new AuthException("Invalid Token!"));
+                   return;
+               }
+               // => token dung
+               UsernamePasswordAuthenticationToken
+                       authenToken =
+                       new UsernamePasswordAuthenticationToken(account, token, account.getAuthorities());
+               authenToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+               SecurityContextHolder.getContext().setAuthentication(authenToken);
+               // token ok, cho vao`
+               filterChain.doFilter(request, response);
+           }
+       } catch (Exception e) {
+           System.out.println(e.getMessage());
+           throw new RuntimeException(e);
+       }
     }
 
     public String getToken(HttpServletRequest request) {

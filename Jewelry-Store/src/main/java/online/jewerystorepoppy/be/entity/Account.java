@@ -9,6 +9,7 @@ import lombok.ToString;
 import online.jewerystorepoppy.be.enums.AccountStatus;
 import online.jewerystorepoppy.be.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class Account implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
 
+    @Enumerated(EnumType.STRING)
     Role role;
 
     int point = 0;
@@ -64,7 +66,7 @@ public class Account implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

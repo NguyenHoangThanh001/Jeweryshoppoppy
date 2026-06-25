@@ -86,27 +86,32 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public AccountResponse login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getPhoneOrEmail(),
-                loginRequest.getPassword()
-        ));
-        // => account chuẩn
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginRequest.getPhoneOrEmail(),
+                    loginRequest.getPassword()
+            ));
+            // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhoneOrEmail(), loginRequest.getPhoneOrEmail());
-        if (account.getAccountStatus() == AccountStatus.DELETED) {
-            throw new AuthException("Account has been deleted!");
+            Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhoneOrEmail(), loginRequest.getPhoneOrEmail());
+            if (account.getAccountStatus() == AccountStatus.DELETED) {
+                throw new AuthException("Account has been deleted!");
+            }
+            String token = tokenService.generateToken(account);
+
+            AccountResponse accountResponse = new AccountResponse();
+            accountResponse.setPhone(account.getPhone());
+            accountResponse.setToken(token);
+            accountResponse.setEmail(account.getEmail());
+            accountResponse.setFullName(account.getFullName());
+            accountResponse.setRole(account.getRole());
+            accountResponse.setId(account.getId());
+
+            return accountResponse;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
-        String token = tokenService.generateToken(account);
-
-        AccountResponse accountResponse = new AccountResponse();
-        accountResponse.setPhone(account.getPhone());
-        accountResponse.setToken(token);
-        accountResponse.setEmail(account.getEmail());
-        accountResponse.setFullName(account.getFullName());
-        accountResponse.setRole(account.getRole());
-        accountResponse.setId(account.getId());
-
-        return accountResponse;
     }
 
     public void forgotPasswordRequest(String email) {
@@ -137,15 +142,20 @@ public class AuthenticationService implements UserDetailsService {
 
 
     public List<Account> getAllAccount(Role role, String keyWord) {
-        if (role != null) {
-            return authenticationRepository.findAccountByRole(role);
-        }
+        try{
+            if (role != null) {
+                return authenticationRepository.findAccountByRole(role);
+            }
 
-        if (keyWord != null) {
-            return authenticationRepository.findAccountByEmailContainingOrPhoneContainingOrFullNameContaining(keyWord, keyWord, keyWord);
-        }
+            if (keyWord != null) {
+                return authenticationRepository.findAccountByEmailContainingOrPhoneContainingOrFullNameContaining(keyWord, keyWord, keyWord);
+            }
 
-        return authenticationRepository.findAll();
+            return authenticationRepository.findAll();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

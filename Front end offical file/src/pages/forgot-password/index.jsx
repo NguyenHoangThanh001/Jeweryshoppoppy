@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 function ForgotPassword() {
   const onFinish = async (values) => {
     try {
-      await api.post("forgot-password", values);
+      await api.post("/auth/forgot-password", values);
       toast.success("Please check your email!");
     } catch (err) {
       toast.error(err.response.data);

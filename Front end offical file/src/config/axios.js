@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl = "https://jewerystorepoppy.online/api";
-// const baseUrl = "http://localhost:8080/api";
+//const baseUrl = "https://jewerystorepoppy.online/api"; //Only for deployment
+ const baseUrl = "http://localhost:8080/api";
 
 const config = {
   baseUrl,

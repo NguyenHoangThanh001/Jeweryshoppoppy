@@ -35,7 +35,7 @@ function ManageAccount() {
         account[showModal] = response.data;
         setAccount([...account]);
       } else {
-        await api.post("register", values);
+        await api.post("/auth/register", values);
         toast.success("Successfully create new account");
         setAccount([...account, values]);
       }

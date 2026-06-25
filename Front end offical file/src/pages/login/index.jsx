@@ -14,7 +14,7 @@ function Login() {
 
   const onFinish = async (values) => {
     try {
-      const response = await api.post("login", values);
+      const response = await api.post("/auth/login", values);
       console.log(response.data);
       localStorage.setItem("account", JSON.stringify(response.data));
       localStorage.setItem("token", JSON.stringify(response.data.token));
@@ -42,7 +42,7 @@ function Login() {
       >
         <Form.Item
           label="Email or phone number"
-          name="phone"
+          name="phoneOrEmail"
           rules={[
             {
               required: true,

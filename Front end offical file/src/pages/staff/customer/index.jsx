@@ -35,7 +35,7 @@ function ManageCustomer({ handleSelectCustomer }) {
         account[showModal] = response.data;
         setAccount([...account]);
       } else {
-        await api.post("register", {
+        await api.post("/auth/register", {
           ...values,
           role: "CUSTOMER",
         });

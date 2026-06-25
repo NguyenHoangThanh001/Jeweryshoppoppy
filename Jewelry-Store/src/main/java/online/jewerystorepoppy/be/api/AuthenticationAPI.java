@@ -12,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("api")
 @SecurityRequirement(name = "api")
 public class AuthenticationAPI {
 
@@ -35,25 +35,25 @@ public class AuthenticationAPI {
         return ResponseEntity.ok("ok");
     }
 
-    @PostMapping("register") // /api/register
+    @PostMapping("auth/register") // /api/register
     public ResponseEntity register(@RequestBody RegisterRequest registerRequest) {
         // account đã add xuống db
         Account account = authenticationService.register(registerRequest);
         return ResponseEntity.ok(account);
     }
 
-    @PostMapping("login")
+    @PostMapping("auth/login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         AccountResponse account = authenticationService.login(loginRequest);
         return ResponseEntity.ok(account);
     }
 
-    @PostMapping("forgot-password")
+    @PostMapping("auth/forgot-password")
     public void forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         authenticationService.forgotPasswordRequest(forgotPasswordRequest.getEmail());
     }
 
-    @PatchMapping("reset-password")
+    @PatchMapping("auth/reset-password")
     public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         authenticationService.resetPassword(resetPasswordRequest);
     }

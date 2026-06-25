@@ -5,13 +5,18 @@ ensuring fair price by calculating the cost based on size and material of the pr
 
 ## Functions
 -Manage jewelry Product with dynamic price calculation.
+
 -Manage shopping cart and customer order.
+
 -Manage staff account and shift scheduling.
+
 -Online payment gate with VNPay
 
 ## Setting up the project locally
 -Before starting, make sure to install Git and Microsoft SQL Server, Docker Desktop. Installing Visual Studio Code and any Java IDE (e.g IntelliJ) is optional or as an alternative option. 
+
 -First, clone the repository to the local machine.
+
 -Then, run the create database script in MySQL studio 
 
 ### Docker method

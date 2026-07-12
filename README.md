@@ -39,7 +39,7 @@ ensuring fair price by calculating the cost based on size and material of the pr
 
 +Ghost-3107: Order System
 
-+ultrakhaicraft: Product Management System and Authentication
++ultrakhaicraft (Phan Quang Khải): Product Management System and Authentication
 
 +MotUika: Staff and Shift Management System
 
